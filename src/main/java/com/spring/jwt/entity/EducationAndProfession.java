@@ -1,16 +1,19 @@
+
+
+
+
+
+
 package com.spring.jwt.entity;
 
 
 import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
 
 @Entity
-@Table(name = "educationAndProfessionalDetails")
+@Table(name = "educationAndProfession")
 @Getter
 @Setter
 public class EducationAndProfession {
@@ -18,7 +21,7 @@ public class EducationAndProfession {
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer educationAndProfessionalDetailsId;
+    private Integer educationId;
 
     @Column(length = 45, nullable = false)
     private String education;
@@ -35,16 +38,17 @@ public class EducationAndProfession {
     @Column(length = 45, nullable = false)
     private Integer incomePerYear;
 
-    @Column(length = 45)
-    private String status1;
+  //  @Column(length = 45)
+   // private String status;
 
     @Column(length = 45)
     private String educationAndProfessionalDetailsCol;
 
-    @Column
-    private Integer userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToOne(mappedBy = "educationAndProfessionalDetails")
-    private Status status;
+    @OneToOne(mappedBy = "educationAndProfession")
+    private CompleteProfile CompleteProfile;
 
 }

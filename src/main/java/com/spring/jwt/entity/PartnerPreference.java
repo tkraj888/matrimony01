@@ -1,9 +1,6 @@
 package com.spring.jwt.entity;
 
 import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,48 +13,55 @@ public class PartnerPreference {
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer expectationsId;
+    private Integer partnerPreferenceId;
 
-    @Column(length = 45)
+    @Column(nullable = false)
     private String age;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String lookingFor;
 
-    @Column(length = 45)
+    @Column(nullable = false)
     private String height;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String eatingHabits;
 
-    @Column(length = 45)
+    @Column(length = 45,nullable = false)
     private String countryLivingIn;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
+    private String cityLivingIn;
+
+    @Column(length = 45 ,nullable = false)
     private String complexion;
 
-    @Column(length = 45)
+    @Column(length = 45 ,nullable = false)
     private String religion;
 
-    @Column(length = 45)
+    @Column(length = 45 ,nullable = false)
     private String caste;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String education;
 
-    @Column(length = 45)
+    @Column(nullable = false)
+    private Boolean mangal;
+
+    @Column(length = 45, nullable = false)
     private String residentStatus;
 
-    @Column(length = 250)
-    private String preference;
+    @Column(length = 45, nullable = false)
+    private String partnerOccupation;
 
-    @Column(length = 45)
-    private String status1;
+    @Column(nullable = false)
+    private Integer partnerIncome;
 
-    @Column
-    private Integer userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToOne(mappedBy = "partnerPreference")
-    private Status status;
+    private CompleteProfile status;
 
 }

@@ -1,6 +1,9 @@
 package com.spring.jwt.exception;
 
 
+import com.spring.jwt.ExpressInterest.InvalidStatusException;
+import com.spring.jwt.HoroscopeDetails.ResourceAlreadyExistsException;
+import com.spring.jwt.dto.ResponseDto;
 import com.spring.jwt.utils.BaseResponseDTO;
 import com.spring.jwt.utils.ErrorResponseDto;
 import jakarta.validation.ConstraintViolationException;
@@ -286,5 +289,26 @@ public class GlobalException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<?> handleResourceExists(ResourceAlreadyExistsException ex) {
+        return new ResponseEntity<>(
+                buildBody(HttpStatus.BAD_REQUEST, "Already Exists", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+    private Map<String, Object> buildBody(HttpStatus status, String error, String message) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", status.value());
+        body.put("error", error);
+        body.put("message", message);
+        return body;
+    }
+    @ExceptionHandler(InvalidStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidStatus(InvalidStatusException ex) {
+        return new ResponseEntity<>(
+                buildBody(HttpStatus.BAD_REQUEST, "Invalid Status", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }

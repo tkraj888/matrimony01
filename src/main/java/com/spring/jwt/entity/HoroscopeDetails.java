@@ -1,14 +1,9 @@
 package com.spring.jwt.entity;
-
 import jakarta.persistence.*;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 
 @Entity
@@ -22,13 +17,13 @@ public class HoroscopeDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer horoscopeDetailsId;
 
-    @Column(length = 45, nullable = false)
+    @Column(nullable = false)
     private Date dob;
 
     @Column(length = 45, nullable = false)
     private String time;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String birthPlace;
 
     @Column(length = 45, nullable = false)
@@ -55,13 +50,11 @@ public class HoroscopeDetails {
     @Column(length = 45, nullable = false)
     private String devak;
 
-    @Column(length = 45)
-    private String status1;
-
-    @Column
-    private Integer userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToOne(mappedBy = "horoscopeDetails")
-    private Status status;
+    private CompleteProfile completeProfile;
 
 }
