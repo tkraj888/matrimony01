@@ -1,11 +1,6 @@
 package com.spring.jwt.entity;
 
 import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,25 +12,29 @@ import lombok.Setter;
 public class Document {
 
     @Id
-    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer documentId;
 
-    @Column(length = 45, nullable = false)
-    private String documentType;
+    // Example: "Aadhaar", "PAN", "Resume"
+    @Column(nullable = false, length = 50)
+    private String documentName;
 
-    @NotNull(message = "document data cannot be empty")
+    @Column(nullable = false, length = 150)
+    private String fileName;
+
     @Lob
-    @Column(name = "document_data", nullable = false)
-    private byte[] documentData;
+    @Column(columnDefinition = "MEDIUMBLOB", nullable = false)
+    private byte[] fileData;
 
-    @Column
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(length = 45)
-    private String status;
-
-    @OneToMany(mappedBy = "document")
-    private Set<Status> Status = new HashSet<>();
+    //    @Column(length = 45)
+//    private String status1;
+//
+    @ManyToOne
+    @JoinColumn(name = "complete_profile_id")
+    private CompleteProfile completeProfile;
 
 }

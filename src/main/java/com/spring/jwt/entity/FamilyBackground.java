@@ -1,9 +1,6 @@
 package com.spring.jwt.entity;
 
 import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,34 +16,43 @@ public class FamilyBackground {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer familyBackgroundId;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
+    private String fathersName;
+
+    @Column(length = 45, nullable = false)
     private String fatherOccupation;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
+    private String mothersName;
+
+    @Column(length = 45, nullable = false)
     private String motherOccupation;
 
-    @Column(length = 45)
-    private String brother;
+    @Column(nullable = false)
+    private Integer brother;
 
-    @Column(length = 45)
-    private String marriedBrothers;
+    @Column(nullable = false)
+    private Integer marriedBrothers;
 
-    @Column(length = 45)
-    private String sisters;
+    @Column(nullable = false)
+    private Integer sisters;
 
-    @Column(length = 45)
-    private String marriedSisters;
+    @Column(nullable = false)
+    private Integer marriedSisters;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private Boolean interCasteInFamily;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String parentResiding;
 
     @Column(length = 45)
+    private String familyWealth;
+
+    @Column(length = 45, nullable = false)
     private String mamaSurname;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = false)
     private String mamaPlace;
 
     @Column(length = 45)
@@ -55,10 +61,11 @@ public class FamilyBackground {
     @Column(length = 45)
     private String relativeSurnames;
 
-    @Column
-    private Integer userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToOne(mappedBy = "familyBackground")
-    private Status status;
+    private CompleteProfile status;
 
 }
