@@ -1,6 +1,7 @@
 package com.spring.jwt.exception;
 
 
+import com.spring.jwt.ContactDetails.UnauthorizedException;
 import com.spring.jwt.ExpressInterest.InvalidStatusException;
 import com.spring.jwt.HoroscopeDetails.ResourceAlreadyExistsException;
 import com.spring.jwt.dto.ResponseDto;
@@ -311,4 +312,13 @@ public class GlobalException extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnauthorizedException(UnauthorizedException ex) {
+        return new ResponseEntity<>(
+                buildBody(HttpStatus.UNAUTHORIZED, "Unauthorized", ex.getMessage()),
+                HttpStatus.UNAUTHORIZED
+        );
+    }
+
 }

@@ -15,6 +15,8 @@ public class UserView {
     private Integer userViewId;
     private LocalDate date;
     private Integer userId;
-    private Integer contactNumberId;
+    private Integer dayCredit;
+    private Integer contactId;
 
 }
+

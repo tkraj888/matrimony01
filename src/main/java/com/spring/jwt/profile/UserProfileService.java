@@ -8,5 +8,5 @@ public interface UserProfileService {
     List<UserProfileDTO2> getAllUserProfiles();
     UserProfileDTO2 updateUserProfile(Integer id, UserProfileDTO2 userProfileDTO);
     void deleteUserProfile(Integer id);
-    List<Object> getProfilesByGender(String gender);
+    List<Object> getProfilesByGender(String gender, int page, int size);
 }

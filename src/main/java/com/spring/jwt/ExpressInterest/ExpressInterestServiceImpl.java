@@ -10,7 +10,9 @@ import com.spring.jwt.profile.UserProfileDTO2;
 import com.spring.jwt.profile.UserProfileMapper;
 import com.spring.jwt.repository.UserProfileRepository;
 import com.spring.jwt.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,24 +27,27 @@ public class ExpressInterestServiceImpl implements ExpressInterestService {
     private final UserProfileRepository userProfileRepository;
 
     @Override
+    @Transactional
     public ExpressInterestDTO create(ExpressInterestDTO dto) {
 
         User fromUser = userRepo.findById(Long.valueOf(dto.getFromUser()))
                 .orElseThrow(() -> new ResourceNotFoundException("Sender not found"));
 
-        if (repo.existsByFromUser_IdAndToUserId(dto.getFromUser(), dto.getToUserId())) {
-            throw new ResourceAlreadyExistsException("Interest already sent to this user.");
-        }
-
         dto.setCreatedAt(LocalDateTime.now());
         dto.setStatus(InterestStatus.PENDING);
 
         ExpressInterest entity = ExpressInterestMapper.toEntity(dto, fromUser);
+        try {
+            ExpressInterest saved = repo.save(entity);
+            return ExpressInterestMapper.toDTO(saved);
 
-        ExpressInterest saved = repo.save(entity);
-
-        return ExpressInterestMapper.toDTO(saved);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceAlreadyExistsException(
+                    "Interest already exists between users (duplicate not allowed)."
+            );
+        }
     }
+
 
     @Override
     public ExpressInterestDTO getById(Long id) {
@@ -106,8 +111,6 @@ public class ExpressInterestServiceImpl implements ExpressInterestService {
 
         return list.stream()
                 .map(interest -> {
-
-                    // Get sender profile
                     UserProfile senderProfile = userProfileRepository
                             .findByUser_Id(Math.toIntExact(interest.getFromUser().getId()))
                             .orElse(null);

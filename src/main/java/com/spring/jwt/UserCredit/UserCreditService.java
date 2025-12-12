@@ -13,4 +13,5 @@ public interface UserCreditService {
     UserCreditDTO update(Integer id, UserCreditDTO dto);
 
     void delete(Integer id);
+     UserCreditDTO getByUserId(Integer userId);
 }

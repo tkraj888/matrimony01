@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "express_interest")
+@Table(name = "express_interest", uniqueConstraints = @UniqueConstraint(columnNames = {"from_user_id", "toUserId"}))
 @Data
 public class ExpressInterest {
 
@@ -14,7 +14,6 @@ public class ExpressInterest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long interestId;
 
-    // who sent
     @ManyToOne
     @JoinColumn(name = "from_user_id", nullable = false)
     private User fromUser;

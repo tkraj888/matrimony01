@@ -14,6 +14,10 @@ import com.spring.jwt.repository.UserProfileRepository;
 import com.spring.jwt.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -75,7 +79,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         CompleteProfile cp = completeProfileRepository.findByUser_Id(userId).orElseGet(() -> {
             CompleteProfile newCp = new CompleteProfile();
             newCp.setUser(user);
-            newCp.setStatusCol("INCOMPLETE");
             newCp.setProfileCompleted(false);
             return newCp;
         });
@@ -146,7 +149,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         if (dto.getNativeTaluka() != null) existing.setNativeTaluka(dto.getNativeTaluka());
         if (dto.getCurrentCity() != null) existing.setCurrentCity(dto.getCurrentCity());
 
-        if (dto.getUserProfileCol() != null) existing.setUserProfileCol(dto.getUserProfileCol());
+
 
         // Ensure original user stays same
         existing.setUser(user);
@@ -166,22 +169,29 @@ public class UserProfileServiceImpl implements UserProfileService {
 
         userProfileRepository.delete(profile);
     }
-@Override
-    public List<Object> getProfilesByGender(String gender) {
+    @Override
+    public List<Object> getProfilesByGender(String gender, int page, int size) {
 
         Gender g = Gender.valueOf(gender.toUpperCase());
 
-        List<UserProfile> profiles = userProfileRepository.findByGender(g);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "userProfileId"));
 
-        // CHECK AUTHENTICATION ONLY FROM SECURITY CONTEXT
+        Page<UserProfile> profiles = userProfileRepository.findByGender(g, pageable);
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        boolean isAuthenticated = auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal());
 
-        return profiles.stream()
+        boolean isAuthenticated =
+                auth != null &&
+                        auth.isAuthenticated() &&
+                        !"anonymousUser".equals(auth.getPrincipal());
+
+        return profiles.getContent()
+                .stream()
                 .map(profile -> isAuthenticated
-                        ? UserProfileMapper.toDTO(profile)          // FULL profile
-                        : UserProfileMapper.toPublicDTO(profile) // LIMITED profile
+                        ? UserProfileMapper.toDTO(profile)          // FULL details
+                        : UserProfileMapper.toPublicDTO(profile)   // LIMITED details
                 )
                 .toList();
     }
+
 }

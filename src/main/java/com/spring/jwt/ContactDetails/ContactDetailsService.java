@@ -13,4 +13,6 @@ public interface ContactDetailsService {
     ContactDetailsDTO update(Integer id, ContactDetailsDTO dto);
 
     void delete(Integer id);
+
+    ContactDetailsDTO getByUserId(Integer targetUserId);
 }

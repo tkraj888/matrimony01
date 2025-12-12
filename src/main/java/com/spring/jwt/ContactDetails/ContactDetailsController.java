@@ -1,7 +1,9 @@
 package com.spring.jwt.ContactDetails;
 
 import com.spring.jwt.dto.ResponseDto;
+import com.spring.jwt.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +53,17 @@ public class ContactDetailsController {
             return ResponseEntity.ok(ResponseDto.success("Deleted successfully", null));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ResponseDto.error("Delete failed", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ResponseDto<ContactDetailsDTO>> getByUserId(@PathVariable Integer userId) {
+        try {
+            ContactDetailsDTO dto = service.getByUserId(userId);
+            return ResponseEntity.ok(ResponseDto.success("Contact details fetched", dto));
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseDto.error("Not Found", ex.getMessage()));
         }
     }
 }

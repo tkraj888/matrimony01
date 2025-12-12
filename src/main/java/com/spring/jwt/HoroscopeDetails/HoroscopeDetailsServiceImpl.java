@@ -68,7 +68,6 @@ public HoroscopeDetailsDTO create(HoroscopeDetailsDTO dto) {
             .orElseGet(() -> {
                 CompleteProfile newCp = new CompleteProfile();
                 newCp.setUser(user);
-                newCp.setStatusCol("INCOMPLETE");
                 newCp.setProfileCompleted(false);
                 return newCp;
             });

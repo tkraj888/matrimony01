@@ -42,7 +42,6 @@ public class EducationAndProfessionServiceImpl implements EducationAndProfession
         CompleteProfile cp = completeProfileRepo.findByUser_Id(userId).orElseGet(() -> {
             CompleteProfile newCp = new CompleteProfile();
             newCp.setUser(user);
-            newCp.setStatusCol("INCOMPLETE");
             newCp.setProfileCompleted(false);
             return newCp;
         });
@@ -89,7 +88,6 @@ public class EducationAndProfessionServiceImpl implements EducationAndProfession
                 .orElseGet(() -> {
                     CompleteProfile newCp = new CompleteProfile();
                     newCp.setUser(user);
-                    newCp.setStatusCol("INCOMPLETE");
                     newCp.setProfileCompleted(false);
                     return newCp;
                 });

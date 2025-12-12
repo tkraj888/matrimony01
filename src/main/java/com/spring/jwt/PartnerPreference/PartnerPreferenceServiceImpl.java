@@ -48,7 +48,6 @@ public class PartnerPreferenceServiceImpl implements PartnerPreferenceService {
                 .orElseGet(() -> {
                     CompleteProfile newCP = new CompleteProfile();
                     newCP.setUser(user);
-                    newCP.setStatusCol("INCOMPLETE");
                     newCP.setProfileCompleted(false);
                     return newCP;
                 });
