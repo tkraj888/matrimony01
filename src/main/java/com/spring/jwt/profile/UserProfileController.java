@@ -75,12 +75,18 @@ public class UserProfileController {
                     .body(ResponseDto.error("Failed to delete profile", e.getMessage()));
         }
     }
-    @GetMapping("/profiles/gender/{gender}")
-    public ResponseEntity<ResponseDto<List<Object>>> getProfilesByGender(@PathVariable String gender) {
+    @GetMapping("/gender/{gender}")
+    public ResponseEntity<ResponseDto<List<Object>>> getProfilesByGender(
+            @PathVariable String gender,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        List<Object> data = userProfileService.getProfilesByGender(gender);
+        List<Object> profiles = userProfileService.getProfilesByGender(gender, page, size);
 
-        return ResponseEntity.ok(ResponseDto.success("Profiles fetched", data));
+        return ResponseEntity.ok(
+                ResponseDto.success("Profiles fetched successfully", profiles)
+        );
     }
+
 
 }

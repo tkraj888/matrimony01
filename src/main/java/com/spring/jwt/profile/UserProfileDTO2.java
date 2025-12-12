@@ -47,8 +47,6 @@ public class UserProfileDTO2{
         private String nativeTaluka;
         private String currentCity;
 
-        // Other
-        private String userProfileCol;
 
         // Relationship
         private Integer userId;

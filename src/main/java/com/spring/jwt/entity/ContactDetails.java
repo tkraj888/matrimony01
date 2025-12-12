@@ -35,7 +35,7 @@ public class ContactDetails {
     private CompleteProfile CompleteProfile;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private User user;
 
 }

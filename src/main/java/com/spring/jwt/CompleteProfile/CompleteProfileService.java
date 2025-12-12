@@ -4,11 +4,9 @@ import com.spring.jwt.entity.CompleteProfile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-public class CompleteProfileService {
+public interface CompleteProfileService {
 
-    private final CompleteProfileRepository completeProfileRepository;
+
 
     /**
      * Recalculate profileCompleted based on presence of sections.
@@ -18,23 +16,10 @@ public class CompleteProfileService {
      *
      * You can adjust business rule as required.
      */
-    public void recalcAndSave(CompleteProfile cp) {
-        boolean completed = true;
+    void recalcAndSave(CompleteProfile cp);
 
-        if (cp.getUserProfile() == null) completed = false;
-        if (cp.getHoroscopeDetails() == null) completed = false;
-        if (cp.getEducationAndProfession() == null) completed = false;
-        if (cp.getFamilyBackground() == null) completed = false;
-        if (cp.getPartnerPreference() == null) completed = false;
-        if (cp.getContactDetails() == null) completed = false;
+    CompleteProfileDTO getByUserId(Integer userId);
+    MissingProfileDTO checkMissingSections(Integer userId);
 
-        // documents list or documentIds not empty
-        if ((cp.getDocuments() == null || cp.getDocuments().isEmpty())
-                && (cp.getDocumentIds() == null || cp.getDocumentIds().trim().isEmpty())) {
-            completed = false;
-        }
 
-        cp.setProfileCompleted(completed);
-        completeProfileRepository.save(cp);
-    }
 }

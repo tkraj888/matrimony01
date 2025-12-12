@@ -2,6 +2,8 @@ package com.spring.jwt.repository;
 
 import com.spring.jwt.entity.Enums.Gender;
 import com.spring.jwt.entity.UserProfile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +15,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Intege
     UserProfile findByUserId(Integer userId);
 
 
-    List<UserProfile> findByGender(Gender g);
+    Page<UserProfile> findByGender(Gender gender, Pageable pageable);
+
 
     Optional<UserProfile> findByUser_Id(Integer userId);
 

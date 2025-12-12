@@ -37,7 +37,6 @@ public class UserProfileMapper {
                 profile.getHomeTownDistrict(),
                 profile.getNativeTaluka(),
                 profile.getCurrentCity(),
-                profile.getUserProfileCol(),
                 profile.getUser().getId()
         );
     }
@@ -71,7 +70,6 @@ public class UserProfileMapper {
         profile.setHomeTownDistrict(dto.getHomeTownDistrict());
         profile.setNativeTaluka(dto.getNativeTaluka());
         profile.setCurrentCity(dto.getCurrentCity());
-        profile.setUserProfileCol(dto.getUserProfileCol());
         profile.setUser(user);
         return profile;
     }

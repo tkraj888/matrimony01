@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 @Repository
 public interface CompleteProfileRepository extends JpaRepository<CompleteProfile, Integer> {
-    Optional<CompleteProfile> findByUser_Id(Integer userId);
+   Optional<CompleteProfile> findByUser_Id(Integer userId);
 }

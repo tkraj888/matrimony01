@@ -17,9 +17,13 @@ public class UserCreditDTO {
     private LocalDate date;
     private LocalDate endDate;
     private String status;
+    private Integer dayCredit;
     private Integer useCredit;
     private Integer balanceCredit;
 
     private Integer userId;          // FK → User
     private Integer subscriptionId;  // FK → Subscription
+
+    public UserCreditDTO(Integer userCreditId, Integer totalCredit, LocalDate date, LocalDate endDate, String status, Integer useCredit, Integer balanceCredit, Integer userId, Integer integer) {
+    }
 }

@@ -16,8 +16,6 @@ public class CompleteProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer completeProfileId;
 
-    @Column(length = 45)
-    private String statusCol;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userProfileId")
@@ -50,8 +48,8 @@ public class CompleteProfile {
     @Column(name = "profile_completed")
     private boolean profileCompleted = false;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String documentIds;
+//    @Column(columnDefinition = "LONGTEXT")
+//    private String documentIds;
 
     @OneToMany(mappedBy = "completeProfile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Document> documents = new ArrayList<>();

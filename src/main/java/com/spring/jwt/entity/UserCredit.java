@@ -19,6 +19,7 @@ public class UserCredit {
     private LocalDate date;
     private LocalDate endDate;
     private String status;
+    private Integer dayCredit;
     private Integer useCredit;
     private Integer balanceCredit;
 

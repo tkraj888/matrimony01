@@ -83,7 +83,6 @@ public class UserProfile {
     @Column(length = 45, nullable = false)
     private String diet;
 
-    // Health
     @Column(nullable = false)
     private Boolean spectacle;
 
@@ -93,7 +92,6 @@ public class UserProfile {
     @Column(nullable = false)
     private Boolean physicallyChallenged;
 
-    // Location
     @Column(length = 45, nullable = false)
     private String homeTownDistrict;
 
@@ -103,10 +101,7 @@ public class UserProfile {
     @Column(length = 45, nullable = false)
     private String currentCity;
 
-    // Other
-    private String userProfileCol;
 
-    // Relationship with User table
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -3,7 +3,6 @@ package com.spring.jwt.UserView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
 @Data
@@ -15,7 +14,7 @@ public class UserViewDTO {
 
     private LocalDate date;
 
-    private Integer userId;          // FK → User
+    private Integer userId;
 
-    private Integer contactNumberId; // FK → ContactDetails or similar
+    private Integer contactId;
 }
