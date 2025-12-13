@@ -1,10 +1,15 @@
 package com.spring.jwt.service.impl;
 
 
+import com.spring.jwt.CompleteProfile.CompleteProfileRepository;
+import com.spring.jwt.ContactDetails.ContactDetailsRepository;
+import com.spring.jwt.Document.DocumentRepository;
+import com.spring.jwt.EducationAndProfession.EducationAndProfessionRepository;
+import com.spring.jwt.FamilyBackground.FamilyBackgroundRepository;
+import com.spring.jwt.HoroscopeDetails.HoroscopeDetailsRepository;
+import com.spring.jwt.PartnerPreference.PartnerPreferenceRepository;
 import com.spring.jwt.dto.*;
-import com.spring.jwt.entity.Role;
-import com.spring.jwt.entity.User;
-import com.spring.jwt.entity.UserProfile;
+import com.spring.jwt.entity.*;
 import com.spring.jwt.exception.BaseException;
 import com.spring.jwt.exception.UserNotFoundExceptions;
 import com.spring.jwt.repository.RoleRepository;
@@ -48,6 +53,21 @@ public class UserServiceImpl implements UserService {
 
     private final JavaMailSender mailSender;
 
+    private final ContactDetailsRepository contactRepository;
+
+    private final DocumentRepository documentRepository;
+
+    private final EducationAndProfessionRepository educationAndProfessionRepository;
+
+    private final FamilyBackgroundRepository familyBackgroundRepository;
+
+    private final HoroscopeDetailsRepository horoscopeRepository;
+
+    private final PartnerPreferenceRepository partnerPreferenceRepository;
+
+    private final CompleteProfileRepository completeProfileRepository;
+
+
     private final UserProfileRepository userProfileRepository;
 
     private final EmailVerificationRepo emailVerificationRepo;
@@ -57,7 +77,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
-    
+
     private final UserMapper userMapper;
 
     @Value("${app.url.password-reset}")
@@ -98,9 +118,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setMobileNumber(userDTO.getMobileNumber());
-//        user.setFirstName(userDTO.getFirstName());
-//        user.setLastName(userDTO.getLastName());
-//        user.setAddress(userDTO.getAddress());
+        user.setGender(userDTO.getGender());
         user.setEmailVerified(true);
 
         Set<Role> roles = new HashSet<>();
@@ -120,18 +138,22 @@ public class UserServiceImpl implements UserService {
 
         user = userRepository.save(user);
 
-        if (role != null) {
-            switch (role.getName()) {
-                case "USER":
-                   createUserProfile(user, userDTO);
-                    break;
-                case "ADMIN":
-                    createAdminProfile(user,userDTO);
+        CompleteProfile completeProfile = new CompleteProfile();
+        completeProfile.setUser(user);
+        completeProfileRepository.save(completeProfile);
 
-                default:
-                    break;
-            }
-        }
+//        if (role != null) {
+//            switch (role.getName()) {
+//                case "USER":
+//                   createUserProfile(user, userDTO);
+//                    break;
+//                case "ADMIN":
+//                    createAdminProfile(user,userDTO);
+//
+//                default:
+//                    break;
+//            }
+//        }
 
         return user;
     }
@@ -141,10 +163,40 @@ public class UserServiceImpl implements UserService {
 
     private void createUserProfile(User user, UserDTO userDTO) {
         UserProfile userProfile = new UserProfile();
-        userProfile.setMail(userDTO.getEmail());
-        userProfile.setMobileNumber(String.valueOf(userDTO.getMobileNumber()));
+        userProfile.setGender(userDTO.getGender());
+//        userProfile.setMail(userDTO.getEmail());
+//        userProfile.setMobileNumber(userDTO.getMobileNumber());
         userProfile.setUser(user);
         userProfileRepository.save(userProfile);
+
+        ContactDetails contactDetails = new ContactDetails();
+        contactDetails.setUser(user);
+        contactRepository.save(contactDetails);
+
+        Document document =new Document();
+        document.setUser(user);
+        documentRepository.save(document);
+
+        EducationAndProfession educationAndProfession = new EducationAndProfession();
+        educationAndProfession.setUser(user);
+        educationAndProfessionRepository.save(educationAndProfession);
+
+        FamilyBackground familyBackground = new FamilyBackground();
+        familyBackground.setUser(user);
+        familyBackgroundRepository.save(familyBackground);
+
+        HoroscopeDetails horoscopeDetails = new HoroscopeDetails();
+        horoscopeDetails.setUser(user);
+        horoscopeRepository.save(horoscopeDetails);
+
+        PartnerPreference partnerPreference = new PartnerPreference();
+        partnerPreference.setUser(user);
+        partnerPreferenceRepository.save(partnerPreference);
+
+        CompleteProfile completeProfile = new CompleteProfile();
+        completeProfile.setUser(user);
+        completeProfileRepository.save(completeProfile);
+
         log.info("Created  profile for user ID: {}", user.getId());
     }
 
@@ -162,9 +214,8 @@ public class UserServiceImpl implements UserService {
 //        userProfileRepository.save(student);
 //        log.info("Created student profile for user ID: {}", user.getId());
 //    }
-    
 
-    
+
 
 
     private void validateAccount(UserDTO userDTO) {
@@ -204,18 +255,18 @@ public class UserServiceImpl implements UserService {
             log.warn("Forgot password attempt with empty email");
             return new ResponseDto("Unsuccessful", "Email is required");
         }
-        
+
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            log.warn("Forgot password attempt for non-existent email: {}", 
+            log.warn("Forgot password attempt for non-existent email: {}",
                     DataMaskingUtils.maskEmail(email));
             throw new UserNotFoundExceptions("User not found with email: " + email);
         }
 
         String token = RandomStringUtils.randomAlphanumeric(64);
-        log.debug("Generated password reset token for user: {}", 
+        log.debug("Generated password reset token for user: {}",
                 DataMaskingUtils.maskEmail(email));
-        
+
         updateResetPassword(token, email);
 
         String resetPasswordLink = passwordResetUrl + "?token=" + token;
@@ -248,12 +299,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseDto updatePassword(String token, String newPassword) {
         User user = userRepository.findByResetPasswordToken(token);
-        if (user == null || user.getResetPasswordTokenExpiry() == null || 
+        if (user == null || user.getResetPasswordTokenExpiry() == null ||
                 LocalDateTime.now().isAfter(user.getResetPasswordTokenExpiry())) {
             log.warn("Invalid or expired reset token used: {}", token);
             throw new UserNotFoundExceptions("Invalid or expired token");
         }
-        
+
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetPasswordToken(null);
         user.setResetPasswordTokenExpiry(null);
@@ -271,7 +322,7 @@ public class UserServiceImpl implements UserService {
             log.warn("Missing required fields in password reset request");
             return new ResponseDto("Unsuccessful", "Missing required fields");
         }
-        
+
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             log.warn("Password mismatch in reset request");
             return new ResponseDto("Unsuccessful", "Passwords do not match");
@@ -301,20 +352,20 @@ public class UserServiceImpl implements UserService {
         if (token == null || token.isEmpty()) {
             return false;
         }
-        
+
         User user = userRepository.findByResetPasswordToken(token);
         if (user == null) {
             log.debug("Reset token not found: {}", token);
             return false;
         }
 
-        boolean isValid = user.getResetPasswordTokenExpiry() != null && 
+        boolean isValid = user.getResetPasswordTokenExpiry() != null &&
                          LocalDateTime.now().isBefore(user.getResetPasswordTokenExpiry());
-        
+
         if (!isValid) {
             log.debug("Expired reset token used: {}", token);
         }
-        
+
         return isValid;
     }
 
@@ -330,7 +381,7 @@ public class UserServiceImpl implements UserService {
     public Page<UserDTO> getAllUsers(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<User> users = userRepository.findAll(pageable);
-        
+
         return users.map(user -> {
             UserDTO userDTO = userMapper.toDTO(user);
             return populateRoleSpecificData(user, userDTO);
@@ -341,12 +392,12 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundExceptions("User not found with id: " + id));
-        
+
         UserDTO userDTO = userMapper.toDTO(user);
 
         return populateRoleSpecificData(user, userDTO);
     }
-    
+
     /**
      * Helper method to populate role-specific data in UserDTO
      */
@@ -355,12 +406,12 @@ public class UserServiceImpl implements UserService {
         Set<String> roles = user.getRoles().stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
-                
+
         // Ensure the roles collection is preserved
         userDTO.setRoles(roles);
 
         Integer userId = user.getId().intValue();
-        
+
 //        if (roles.contains("USER")) {
 //            UserProfile userProfile = userProfileRepository.findByUserId(userId);
 //            if (userProfile != null) {
@@ -371,7 +422,7 @@ public class UserServiceImpl implements UserService {
 //                userDTO.setStudentClass(userProfile.getStudentClass());
 //            }
 //        }
-        
+
         return userDTO;
     }
 
@@ -392,7 +443,7 @@ public class UserServiceImpl implements UserService {
         if (request.getMobileNumber() != null) {
             user.setMobileNumber(request.getMobileNumber());
         }
-        
+
         User updatedUser = userRepository.save(user);
         return userMapper.toDTO(updatedUser);
     }
@@ -401,26 +452,26 @@ public class UserServiceImpl implements UserService {
     public UserProfileDTO getUserProfileById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundExceptions("User not found with id: " + id));
-        
+
         return buildUserProfileDTO(user);
     }
-    
+
     @Override
     public UserProfileDTO getCurrentUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new BaseException(String.valueOf(HttpStatus.UNAUTHORIZED.value()), "User not authenticated");
         }
-        
+
         String email = authentication.getName();
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UserNotFoundExceptions("User not found with email: " + email);
         }
-        
+
         return buildUserProfileDTO(user);
     }
-    
+
     private UserProfileDTO buildUserProfileDTO(User user) {
         UserProfileDTO profileDTO = new UserProfileDTO();
 
@@ -432,16 +483,16 @@ public class UserServiceImpl implements UserService {
         profileDTO.setRoles(roles);
 
         Integer userId = user.getId().intValue();
-        
+
 //        if (roles.contains("USER")) {
 //            UserProfile student = userProfileRepository.findByUserId(userId);
 //            if (student != null) {
 //                profileDTO.setUserProfileDTO1(UserProfileDTO1.fromEntity(student));
 //            }
 //        }
-        
 
-        
+
+
         return profileDTO;
     }
 }

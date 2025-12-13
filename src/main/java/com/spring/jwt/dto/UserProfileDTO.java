@@ -1,6 +1,7 @@
 package com.spring.jwt.dto;
 
 
+import com.spring.jwt.profile.UserProfileDTO2;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class UserProfileDTO {
     private UserDTO user;
 
     // Role-specific information
-    private UserProfileDTO1 userProfileDTO1;
+//    private UserProfileDTO2 userProfileDTO1;
 
 
     // User roles
