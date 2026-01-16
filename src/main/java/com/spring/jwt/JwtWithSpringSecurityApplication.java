@@ -51,4 +51,5 @@ public class JwtWithSpringSecurityApplication {
 		System.err.println("documentation : "+"http://localhost:8080/swagger-ui/index.html#/   ok");
 		System.err.println("New Subbranch 0o");
 	}
+
 }
